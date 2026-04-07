@@ -24,16 +24,7 @@
             z-index: 100;
             border-bottom: 1px solid #f0f0f0;
         }
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 32px;
-            color: #5b5fc7;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .logo svg { width: 36px; height: 36px; }
+        .logo img { height: 48px; width: auto; }
         .nav-links { display: flex; gap: 36px; list-style: none; }
         .nav-links a { font-size: 15px; font-weight: 500; color: #444; transition: color .2s; }
         .nav-links a:hover { color: #5b5fc7; }
@@ -50,8 +41,8 @@
         /* ── HERO ── */
         .hero {
             position: relative;
-            height: 85vh;
-            min-height: 500px;
+            height: 60vh;
+            min-height: 380px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -64,7 +55,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: url('https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1600&q=80') center/cover no-repeat;
+            background: url('assets/hero.jpg') center/cover no-repeat;
             filter: brightness(.55);
             z-index: 0;
         }
@@ -97,25 +88,41 @@
         .stat .number { font-size: 42px; font-weight: 700; color: #222; }
         .stat .label { font-size: 15px; color: #666; margin-top: 4px; }
 
-        /* ── LOGOS ── */
+        /* ── LOGOS TICKER ── */
         .logos {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 60px;
-            padding: 40px 60px;
+            overflow: hidden;
+            padding: 36px 0;
             background: #fff;
-            flex-wrap: wrap;
+            position: relative;
         }
-        .logos span {
-            font-size: 22px;
-            font-weight: 700;
-            color: #999;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .logos::before, .logos::after {
+            content: '';
+            position: absolute;
+            top: 0; bottom: 0;
+            width: 120px;
+            z-index: 2;
+            pointer-events: none;
         }
-        .logos .sky { color: #6CBF00; font-size: 28px; }
-        .logos .imapper { color: #6C3FCC; font-family: 'Inter', sans-serif; font-size: 28px; }
+        .logos::before { left: 0; background: linear-gradient(to right, #fff, transparent); }
+        .logos::after  { right: 0; background: linear-gradient(to left, #fff, transparent); }
+        .logos-track {
+            display: flex;
+            align-items: center;
+            gap: 70px;
+            width: max-content;
+            animation: ticker 22s linear infinite;
+        }
+        .logos-track img {
+            height: 48px;
+            width: auto;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+        .logos-track img[alt="Oltre"] { height: 80px; }
+        @keyframes ticker {
+            from { transform: translateX(0); }
+            to   { transform: translateX(-50%); }
+        }
 
         /* ── ABOUT ── */
         .about {
@@ -182,31 +189,64 @@
         /* ── TESTIMONIALS CAROUSEL ── */
         .testimonials { padding: 80px 60px; text-align: center; }
         .testimonials h2 { font-family: 'Playfair Display', serif; font-size: 40px; margin-bottom: 40px; }
-        .testimonial-cards {
+        .carousel-wrapper { overflow: hidden; }
+        .testimonial-slides {
             display: flex;
-            gap: 30px;
+            transition: transform .45s ease;
+        }
+        .testimonial-slide {
+            min-width: 100%;
+            display: flex;
+            gap: 24px;
             justify-content: center;
-            flex-wrap: wrap;
         }
         .testimonial-card {
             background: #fff;
             border: 1px solid #eee;
             border-radius: 16px;
             padding: 36px 28px;
+            flex: 1;
             max-width: 340px;
             text-align: center;
             box-shadow: 0 2px 12px rgba(0,0,0,.05);
         }
         .testimonial-card .avatar {
-            width: 70px; height: 70px; border-radius: 50%;
+            width: 90px; height: 90px; border-radius: 50%;
             margin: 0 auto 16px;
             background: #ddd;
             overflow: hidden;
         }
-        .testimonial-card .avatar img { width: 100%; height: 100%; object-fit: cover; }
+        .testimonial-card .avatar img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
         .testimonial-card .quote { font-size: 14px; color: #555; line-height: 1.65; font-style: italic; margin-bottom: 20px; }
         .testimonial-card .name { font-weight: 700; font-size: 15px; }
         .testimonial-card .company { font-size: 13px; color: #888; }
+        .carousel-nav {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 32px;
+        }
+        .carousel-arrow {
+            width: 44px; height: 44px; border-radius: 50%;
+            border: 2px solid #6C63FF;
+            background: transparent;
+            color: #6C63FF;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: background .2s, color .2s;
+            line-height: 1;
+        }
+        .carousel-arrow:hover { background: #6C63FF; color: #fff; }
+        .carousel-arrow:disabled { opacity: .3; cursor: default; }
+        .carousel-dots { display: flex; gap: 8px; }
+        .carousel-dots button {
+            width: 10px; height: 10px; border-radius: 50%;
+            border: none; background: #ccc; cursor: pointer; padding: 0;
+            transition: background .2s;
+        }
+        .carousel-dots button.active { background: #6C63FF; }
 
         /* ── DETAILED TESTIMONIALS ── */
         .detailed-testimonial {
@@ -233,27 +273,12 @@
         .detailed-testimonial .author-title { font-size: 13px; color: #888; }
         .detailed-testimonial .video-side {
             flex: 0 0 480px;
-            height: 300px;
-            background: #111;
+            height: 270px;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #fff;
-            font-size: 14px;
-            position: relative;
             overflow: hidden;
         }
-        .play-btn {
-            width: 60px; height: 60px; background: red; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .play-btn::after {
-            content: '';
-            border-left: 22px solid #fff;
-            border-top: 13px solid transparent;
-            border-bottom: 13px solid transparent;
-            margin-left: 4px;
+        .detailed-testimonial .video-side iframe {
+            width: 100%; height: 100%; border: none; display: block;
         }
 
         /* ── CTA SECTION ── */
@@ -340,6 +365,8 @@
         @media (max-width: 600px) {
             .hero h1 { font-size: 36px; }
             .nav-links { display: none; }
+            .testimonials { padding: 60px 16px; }
+            .testimonial-card { max-width: 100%; }
         }
     </style>
 </head>
@@ -348,10 +375,7 @@
 <!-- HEADER -->
 <header class="header">
     <a href="#" class="logo">
-        <svg viewBox="0 0 40 40" fill="none">
-            <path d="M20 4C11.2 4 4 11.2 4 20s7.2 16 16 16 16-7.2 16-16S28.8 4 20 4zm0 6c1.5 0 2.8.5 3.8 1.4L20 15.2l-3.8-3.8A5.5 5.5 0 0120 10zm-6 10c0-1.5.5-2.8 1.4-3.8L19.2 20l-3.8 3.8A5.5 5.5 0 0114 20zm6 6c-1.5 0-2.8-.5-3.8-1.4L20 20.8l3.8 3.8A5.5 5.5 0 0120 26zm6-6c0 1.5-.5 2.8-1.4 3.8L20.8 20l3.8-3.8A5.5 5.5 0 0126 20z" fill="#6C63FF"/>
-        </svg>
-        Twist
+        <img src="assets/logo_twist.png" alt="Twist">
     </a>
     <nav>
         <ul class="nav-links">
@@ -395,10 +419,24 @@
 
 <!-- LOGOS -->
 <section class="logos">
-    <span>AMIGNI AINER</span>
-    <span style="color:#5bc0de;">&#x25B2; LG STUDIO</span>
-    <span class="sky">&#x26A1; SKY FITNESS</span>
-    <span class="imapper">imapper</span>
+    <div class="logos-track">
+        <!-- set 1 -->
+        <img src="assets/logo_amigni.png" alt="Amigni Ainer">
+        <img src="assets/logo_cm.svg" alt="Camminata Metabolica">
+        <img src="assets/logo_skyfitness.webp" alt="Sky Fitness">
+        <img src="assets/logo_imapper.png" alt="iMapper">
+        <img src="assets/logo_flamigni.png" alt="Flamigni Trainer">
+        <img src="assets/logo_vitaedna.png" alt="VitaeDNA">
+        <img src="assets/logo_oltre.png" alt="Oltre">
+        <!-- set 2 (duplicate for seamless loop) -->
+        <img src="assets/logo_amigni.png" alt="Amigni Ainer">
+        <img src="assets/logo_cm.svg" alt="Camminata Metabolica">
+        <img src="assets/logo_skyfitness.webp" alt="Sky Fitness">
+        <img src="assets/logo_imapper.png" alt="iMapper">
+        <img src="assets/logo_flamigni.png" alt="Flamigni Trainer">
+        <img src="assets/logo_vitaedna.png" alt="VitaeDNA">
+        <img src="assets/logo_oltre.png" alt="Oltre">
+    </div>
 </section>
 
 <!-- ABOUT -->
@@ -412,7 +450,7 @@
         <a href="https://calendar.app.google/g3CQ6tWvKP9WZg3S9" class="btn-primary" style="margin-top: 16px;" target="_blank">Prenota una Chiamata con Alessandro</a>
     </div>
     <div class="about-img">
-        <div style="width:100%;height:100%;background:linear-gradient(135deg,#b8cfe0,#8ba8c0);display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">Foto Alessandro</div>
+        <img src="assets/about-alessandro.jpg" alt="Alessandro Zanatta">
     </div>
 </section>
 
@@ -423,28 +461,28 @@
     <div class="team-grid">
         <div class="team-member">
             <div class="team-avatar blue">
-                <div style="width:100%;height:100%;background:#7986CB;display:flex;align-items:center;justify-content:center;color:#fff;font-size:32px;">D</div>
+                <img src="assets/dylan.jpg" alt="Dylan Benotto">
             </div>
             <h4>Dylan Benotto</h4>
             <div class="role">Performance Marketer</div>
         </div>
         <div class="team-member">
             <div class="team-avatar purple">
-                <div style="width:100%;height:100%;background:#AB47BC;display:flex;align-items:center;justify-content:center;color:#fff;font-size:32px;">A</div>
+                <img src="assets/alessandrobrunelli.jpg" alt="Alessandro Brunelli">
             </div>
             <h4>Alessandro Brunelli</h4>
             <div class="role">Funnel Expert & Full Stack Marketer</div>
         </div>
         <div class="team-member">
             <div class="team-avatar gray">
-                <div style="width:100%;height:100%;background:#9E9E9E;display:flex;align-items:center;justify-content:center;color:#fff;font-size:32px;">E</div>
+                <img src="assets/emanuelediprima.jpg" alt="Emanuele Di Prima">
             </div>
             <h4>Emanuele Di Prima</h4>
             <div class="role">Email Marketing Expert</div>
         </div>
         <div class="team-member">
             <div class="team-avatar dark">
-                <div style="width:100%;height:100%;background:#546E7A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:32px;">M</div>
+                <img src="assets/marcofantin.png" alt="Marco Fantin">
             </div>
             <h4>Marco Fantin</h4>
             <div class="role">Videomaker & Graphic designer</div>
@@ -479,31 +517,50 @@
 <!-- TESTIMONIANZE -->
 <section class="testimonials" id="testimonianze">
     <h2>Testimonianze</h2>
-    <div class="testimonial-cards">
-        <div class="testimonial-card">
-            <div class="avatar">
-                <div style="width:100%;height:100%;background:#8BC34A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;">S</div>
+    <div class="carousel-wrapper">
+        <div class="testimonial-slides" id="testimonialTrack">
+            <!-- Slide 1 -->
+            <div class="testimonial-slide">
+                <div class="testimonial-card">
+                    <div class="avatar"><img src="assets/stefano.jpg" alt="Stefano Fontanesi"></div>
+                    <div class="quote">"Sono rimasto affascinato non solo dalle competenze, ma anche dal dinamismo, dalla voglia di riuscire nel progetto."</div>
+                    <div class="name">Stefano Fontanesi</div>
+                    <div class="company">Ideatore di Camminata Metabolica</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="avatar"><img src="assets/luca.jpg" alt="Luca Girardin"></div>
+                    <div class="quote">"Ho capito che voi ci tenete a farmi crescere, perché se cresco io crescete anche voi e per me è la cosa più importante in assoluto."</div>
+                    <div class="name">Luca Girardin</div>
+                    <div class="company">Fondatore di LG Studio</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="avatar"><img src="assets/martin.jpg" alt="Martin Flamigni"></div>
+                    <div class="quote">"Quando avevo bisogno di riempire delle slot, siamo subito riusciti ad arrivare all'obiettivo prefissato con ottime strategie."</div>
+                    <div class="name">Martin Flamigni</div>
+                    <div class="company">Fondatore di Flamigni Trainer</div>
+                </div>
             </div>
-            <div class="quote">"Sono rimasto affascinato non solo dalle competenze, ma anche dal dinamismo, dalla voglia di riuscire nel progetto."</div>
-            <div class="name">Stefano Fontanesi</div>
-            <div class="company">Ideatore di Camminata Metabolica</div>
-        </div>
-        <div class="testimonial-card">
-            <div class="avatar">
-                <div style="width:100%;height:100%;background:#42A5F5;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;">L</div>
+            <!-- Slide 2 -->
+            <div class="testimonial-slide">
+                <div class="testimonial-card">
+                    <div class="avatar"><img src="assets/andrea.jpg" alt="Andrea Vagrotelli"></div>
+                    <div class="quote">"Alessandro esegue un attenta e meticolosa analisi di tutti i dati e le variabili messe in campo per creare campagne che vogliono sin da subito essere efficaci."</div>
+                    <div class="name">Andrea Vagrotelli</div>
+                    <div class="company">Fondatore di Oltre srl</div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="avatar"><img src="assets/francesco.jpg" alt="Francesco Lobasso"></div>
+                    <div class="quote">"Molto professionali e proattivi. Individuano le necessità aziendali e studiano delle strategie personalizzate di grande efficacia."</div>
+                    <div class="name">Francesco Lobasso</div>
+                    <div class="company">Fondatore di VitaeDNA</div>
+                </div>
             </div>
-            <div class="quote">"Ho capito che voi ci tenete a farmi crescere, perché se cresco io crescete anche voi e per me è la cosa più importante in assoluto."</div>
-            <div class="name">Luca Girardin</div>
-            <div class="company">Fondatore di LG Studio</div>
         </div>
-        <div class="testimonial-card">
-            <div class="avatar">
-                <div style="width:100%;height:100%;background:#26A69A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px;">M</div>
-            </div>
-            <div class="quote">"Quando avevo bisogno di riempire delle slot, siamo subito riusciti ad arrivare all'obiettivo prefissato con ottime strategie."</div>
-            <div class="name">Martin Flamigni</div>
-            <div class="company">Fondatore di Flamigni Trainer</div>
-        </div>
+    </div>
+    <div class="carousel-nav">
+        <button class="carousel-arrow" id="prevBtn">&#8592;</button>
+        <div class="carousel-dots" id="carouselDots"></div>
+        <button class="carousel-arrow" id="nextBtn">&#8594;</button>
     </div>
 </section>
 
@@ -519,7 +576,7 @@
             <p class="quote-text">"Sono rimasto affascinato non solo dalle competenze, ma anche dal dinamismo, dalla voglia di riuscire nel progetto."</p>
             <div class="author-row">
                 <div class="author-avatar">
-                    <div style="width:100%;height:100%;background:#8BC34A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">S</div>
+                    <img src="assets/stefano.jpg" alt="Stefano Fontanesi">
                 </div>
                 <div>
                     <div class="author-name">Stefano Fontanesi</div>
@@ -528,10 +585,7 @@
             </div>
         </div>
         <div class="video-side">
-            <div style="text-align:center;">
-                <div class="play-btn"></div>
-                <p style="margin-top:12px;font-size:12px;opacity:.7;">Testimonianza Stefano Fontanesi</p>
-            </div>
+            <iframe src="https://www.youtube-nocookie.com/embed/4aU4qTt6IY0" title="Testimonianza Stefano Fontanesi" allowfullscreen loading="lazy"></iframe>
         </div>
     </div>
     <div class="detailed-testimonial">
@@ -539,7 +593,7 @@
             <p class="quote-text">"Ho capito che voi ci tenete a farmi crescere, perché se cresco io crescete anche voi e per me è la cosa più importante in assoluto. Si vede che il vostro lavoro lo fate con passione e voglia di arrivare al risultato, cosa che non avevo visto negli altri. E poi siete bravi perché avete capito quello di cui io ho bisogno."</p>
             <div class="author-row">
                 <div class="author-avatar">
-                    <div style="width:100%;height:100%;background:#42A5F5;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">L</div>
+                    <img src="assets/luca.jpg" alt="Luca Girardin">
                 </div>
                 <div>
                     <div class="author-name">Luca Girardin</div>
@@ -548,10 +602,7 @@
             </div>
         </div>
         <div class="video-side">
-            <div style="text-align:center;">
-                <div class="play-btn"></div>
-                <p style="margin-top:12px;font-size:12px;opacity:.7;">Testimonianza Luca Girardin</p>
-            </div>
+            <iframe src="https://www.youtube-nocookie.com/embed/kmYp2D0eVgo" title="Testimonianza Luca Girardin" allowfullscreen loading="lazy"></iframe>
         </div>
     </div>
     <div class="detailed-testimonial">
@@ -559,7 +610,7 @@
             <p class="quote-text">"Quando avevo bisogno di riempire delle slot, siamo subito riusciti ad arrivare all'obiettivo prefissato con ottime strategie."</p>
             <div class="author-row">
                 <div class="author-avatar">
-                    <div style="width:100%;height:100%;background:#26A69A;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">M</div>
+                    <img src="assets/martin.jpg" alt="Martin Flamigni">
                 </div>
                 <div>
                     <div class="author-name">Martin Flamigni</div>
@@ -568,10 +619,7 @@
             </div>
         </div>
         <div class="video-side">
-            <div style="text-align:center;">
-                <div class="play-btn"></div>
-                <p style="margin-top:12px;font-size:12px;opacity:.7;">Testimonianza Martin Flamigni</p>
-            </div>
+            <iframe src="https://www.youtube-nocookie.com/embed/fT01oAb-I0s" title="Testimonianza Martin Flamigni" allowfullscreen loading="lazy"></iframe>
         </div>
     </div>
 </section>
@@ -579,7 +627,7 @@
 <!-- FOOTER -->
 <footer class="footer" id="contattami">
     <div class="footer-brand">
-        <div class="footer-logo">&#x2728; Twist</div>
+        <img src="assets/logo_twist.png" alt="Twist" style="height:44px;width:auto;margin-bottom:8px;">
         <div class="footer-tagline">Performance Marketing</div>
         <div class="footer-social">
             <a href="https://www.facebook.com/alessandro.zanatta.1044" target="_blank">f</a>
@@ -605,7 +653,7 @@
     <div>
         <div class="footer-profile">
             <div class="footer-profile-avatar">
-                <div style="width:100%;height:100%;background:#6C63FF;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">AZ</div>
+                <img src="assets/about-alessandro.jpg" alt="Alessandro Zanatta">
             </div>
             <div>
                 <div class="profile-name">Alessandro Zanatta</div>
@@ -617,8 +665,9 @@
 </footer>
 <div class="footer-bottom">Made with onepage</div>
 
-<!-- Smooth scroll -->
+<!-- Smooth scroll + Carousel -->
 <script>
+// Smooth scroll
 document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
         e.preventDefault();
@@ -626,6 +675,72 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         if (target) target.scrollIntoView({ behavior: 'smooth' });
     });
 });
+
+// Testimonial carousel
+(function() {
+    const track   = document.getElementById('testimonialTrack');
+    const dotsEl  = document.getElementById('carouselDots');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+
+    // Store all cards once
+    const allCards = Array.from(document.querySelectorAll('.testimonial-card'))
+                          .map(c => c.cloneNode(true));
+
+    let current = 0;
+    let pages   = 0;
+
+    function buildSlides() {
+        const isMobile = window.innerWidth < 768;
+        track.innerHTML = '';
+        dotsEl.innerHTML = '';
+        current = 0;
+
+        const groups = isMobile
+            ? allCards.map(c => [c])                        // 1 card per slide
+            : [allCards.slice(0, 3), allCards.slice(3)];    // 3 + 2
+
+        pages = groups.length;
+
+        groups.forEach(group => {
+            const slide = document.createElement('div');
+            slide.className = 'testimonial-slide';
+            group.forEach(card => slide.appendChild(card.cloneNode(true)));
+            track.appendChild(slide);
+        });
+
+        for (let i = 0; i < pages; i++) {
+            const btn = document.createElement('button');
+            if (i === 0) btn.classList.add('active');
+            btn.addEventListener('click', () => goTo(i));
+            dotsEl.appendChild(btn);
+        }
+
+        goTo(0);
+    }
+
+    function goTo(page) {
+        current = page;
+        const slideWidth = track.parentElement.offsetWidth;
+        track.style.transform = `translateX(-${page * slideWidth}px)`;
+        dotsEl.querySelectorAll('button').forEach((b, i) =>
+            b.classList.toggle('active', i === page)
+        );
+        prevBtn.disabled = current === 0;
+        nextBtn.disabled = current === pages - 1;
+    }
+
+    prevBtn.addEventListener('click', () => { if (current > 0) goTo(current - 1); });
+    nextBtn.addEventListener('click', () => { if (current < pages - 1) goTo(current + 1); });
+
+    buildSlides();
+
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(buildSlides, 200);
+    });
+})();
 </script>
 
 </body>

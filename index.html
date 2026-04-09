@@ -1012,14 +1012,17 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 <script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
 
 <script>
-  // Meta Pixel – evento Lead al successo del form Brevo
+  // Meta Pixel – evento Lead al successo del form Brevo (una sola volta)
   (function() {
     var successPanel = document.getElementById('success-message');
     if (!successPanel) return;
+    var leadFired = false;
     var observer = new MutationObserver(function(mutations) {
+      if (leadFired) return;
       mutations.forEach(function(mutation) {
         if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
           if (successPanel.classList.contains('sib-form-message-panel--active')) {
+            leadFired = true;
             if (typeof fbq === 'function') fbq('track', 'Lead');
             observer.disconnect();
           }

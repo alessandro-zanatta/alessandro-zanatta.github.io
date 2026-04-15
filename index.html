@@ -78,7 +78,7 @@
             top: 0; right: 0; bottom: 0;
             left: 50%;
             background: url('hero.jpg') 50% center / cover no-repeat;
-            filter: brightness(.52);
+            filter: brightness(.62);
             z-index: 0;
             -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%);
             mask-image: linear-gradient(to right, transparent 0%, black 10%);
@@ -88,7 +88,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(to right, #1a1a2e 52%, rgba(26,26,46,.28) 100%);
+            background: linear-gradient(to right, #1a1a2e 52%, rgba(26,26,46,.15) 100%);
             z-index: 1;
         }
         .hero > * { position: relative; z-index: 2; }
@@ -100,6 +100,7 @@
             .hero::after { background: rgba(26,26,46,.55); }
             .hero h1 { font-size: 36px; max-width: 100%; }
             .hero p { max-width: 100%; }
+            .hero .btn-primary { width: 100%; text-align: center; }
         }
         .btn-primary {
             display: inline-block;
@@ -1111,6 +1112,23 @@
 
 <!-- DETAILED TESTIMONIALS -->
 <section>
+    <div class="detailed-testimonial">
+        <div class="text-side">
+            <p class="quote-text">"Abbiamo raggiunto dei risultati molto buoni... c'è stato un ritorno d'investimento ottimo! E il bello di te è che costruisci un rapporto all'interno dell'azienda, in modo da avere tutto un team che lavora insieme."</p>
+            <div class="author-row">
+                <div class="author-avatar">
+                    <img src="FotoGiada.jpg" alt="Giada Barzon">
+                </div>
+                <div>
+                    <div class="author-name">Giada Barzon</div>
+                    <div class="author-title">Fondatrice di Skyfitness</div>
+                </div>
+            </div>
+        </div>
+        <div class="video-side">
+            <iframe src="https://www.youtube-nocookie.com/embed/ZR7OqZOLuFc" title="Testimonianza Giada Barzon" allowfullscreen loading="lazy"></iframe>
+        </div>
+    </div>
     <div class="detailed-testimonial">
         <div class="text-side">
             <p class="quote-text">"Sono rimasto affascinato non solo dalle competenze, ma anche dal dinamismo, dalla voglia di riuscire nel progetto."</p>

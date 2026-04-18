@@ -47,15 +47,55 @@
         .nav-links { display: flex; gap: 36px; list-style: none; }
         .nav-links a { font-size: 15px; font-weight: 500; color: #444; transition: color .2s; }
         .nav-links a:hover { color: #5b5fc7; }
-        .social-icons { display: flex; gap: 14px; }
-        .social-icons a {
-            width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center;
-            font-size: 16px; color: #fff; transition: opacity .2s;
+        /* ── HEADER CTA ── */
+        .header-cta { font-size: 14px; padding: 11px 22px; white-space: nowrap; }
+
+        /* ── HAMBURGER ── */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
         }
-        .social-icons a:hover { opacity: .85; }
-        .social-icons .fb { background: #1877F2; }
-        .social-icons .ig { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
-        .social-icons .li { background: #0A66C2; }
+        .hamburger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: #333;
+            border-radius: 2px;
+            transition: transform .28s, opacity .28s;
+        }
+        .hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .hamburger.open span:nth-child(2) { opacity: 0; }
+        .hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        /* ── MOBILE MENU ── */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 65px; left: 0; right: 0;
+            background: #fff;
+            border-bottom: 1px solid #f0f0f0;
+            box-shadow: 0 8px 24px rgba(0,0,0,.08);
+            z-index: 99;
+            padding: 8px 24px 20px;
+        }
+        .mobile-menu.open { display: block; }
+        .mobile-menu ul { list-style: none; }
+        .mobile-menu ul li { border-bottom: 1px solid #f5f5f5; }
+        .mobile-menu ul li:last-child { border-bottom: none; }
+        .mobile-menu ul li a { display: block; padding: 15px 0; font-size: 17px; font-weight: 500; color: #333; }
+        .mobile-menu .mobile-cta { margin-top: 16px; }
+        .mobile-menu .mobile-cta a { width: 100%; text-align: center; display: block; }
+
+        @media (max-width: 600px) {
+            .nav-links { display: none !important; }
+            .header-cta { display: none !important; }
+            .hamburger { display: flex; }
+        }
 
         /* ── HERO ── */
         .hero {
@@ -616,10 +656,7 @@
         }
 
         /* Brevo form overrides */
-        .contact-right .sib-form {
-            background: transparent !important;
-            padding: 0 !important;
-        }
+        .contact-right .sib-form { background: transparent !important; padding: 0 !important; }
         .contact-right #sib-container {
             max-width: 100% !important;
             border-radius: 16px !important;
@@ -627,37 +664,105 @@
             padding: 24px !important;
             box-shadow: 0 20px 60px rgba(0,0,0,.2) !important;
         }
+        /* Grid: email + telefono affiancati (colonne uguali), allineati in alto */
+        .contact-right #sib-form {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 0 12px !important;
+            align-items: start !important;
+        }
+        .contact-right #sib-form > div:nth-child(1),
+        .contact-right #sib-form > div:nth-child(4),
+        .contact-right #sib-form > div:nth-child(5),
+        .contact-right #sib-form > div:nth-child(6),
+        .contact-right #sib-form > div:nth-child(7) { grid-column: 1 / -1 !important; }
+        /* Gap verticale */
+        .contact-right #sib-form > div { padding: 5px 0 !important; }
+        /* Elimina doppi bordi */
+        .contact-right .form__entry { border: none !important; background: none !important; }
+        .contact-right .entry__field { border: none !important; background: none !important; padding: 0 !important; }
+        /* Labels */
         .contact-right .entry__label {
             font-family: 'Inter', sans-serif !important;
-            font-size: 12px !important;
-            font-weight: 600 !important;
-            letter-spacing: 1px !important;
-            text-transform: uppercase !important;
-            color: #555 !important;
+            font-size: 11px !important; font-weight: 600 !important;
+            letter-spacing: .8px !important; text-transform: uppercase !important;
+            color: #666 !important; margin-bottom: 5px !important;
+            white-space: nowrap !important;
         }
+        /* Inputs */
         .contact-right .input {
             border: 1.5px solid #e0e0e0 !important;
             border-radius: 8px !important;
-            padding: 10px 14px !important;
+            padding: 9px 12px !important;
             font-family: 'Inter', sans-serif !important;
             font-size: 14px !important;
+            background: #fff !important;
             transition: border-color .2s !important;
+            box-shadow: none !important;
         }
         .contact-right .input:focus { border-color: #6C63FF !important; outline: none !important; }
-        .contact-right .sib-form-block__button {
-            background: #6C63FF !important;
-            border-radius: 10px !important;
-            padding: 14px 24px !important;
+        /* Telefono — campo unico pulito, nessuna bandiera, stessa altezza dell'email */
+        .contact-right .sib-sms-tooltip { display: none !important; }
+        .contact-right .sib-sms-select {
+            display: block !important;
+            border: none !important; background: none !important;
+            width: 100% !important; box-sizing: border-box !important;
+        }
+        .contact-right .sib-sms-select__title { display: none !important; }
+        .contact-right .sib-sms-select__number-input {
+            display: flex !important; align-items: center !important;
+            width: 100% !important; min-width: 0 !important;
+            padding: 9px 12px !important;
+            border: 1.5px solid #e0e0e0 !important; border-radius: 8px !important;
+            background: #fff !important; box-sizing: border-box !important;
+            transition: border-color .2s !important;
+        }
+        .contact-right .sib-sms-select__number-input:focus-within { border-color: #6C63FF !important; }
+        .contact-right .sib-sms-select__calling-code { display: none !important; }
+        .contact-right .sib-sms-select__phone-number {
+            border: none !important; background: none !important; outline: none !important;
+            font-size: 14px !important; padding: 0 !important;
+            width: 100% !important; min-width: 0 !important;
             font-family: 'Inter', sans-serif !important;
-            font-size: 15px !important;
-            font-weight: 600 !important;
-            width: 100% !important;
-            text-align: center !important;
-            cursor: pointer !important;
-            transition: background .2s !important;
+        }
+        .contact-right .sib-sms-select__number-input__overlay { display: none !important; }
+        /* Multiselect — dropdown pulito */
+        .contact-right .input--multiselect { cursor: pointer !important; }
+        .contact-right .sib-menu {
+            background: #fff !important;
+            border: 1.5px solid #e0e0e0 !important;
+            border-radius: 10px !important;
+            box-shadow: 0 8px 24px rgba(0,0,0,.10) !important;
+            padding: 6px 8px !important;
+            margin-top: 4px !important;
+        }
+        .contact-right .sib-menu__select { display: none !important; }
+        .contact-right .sib-menu__item { border-radius: 6px !important; padding: 0 !important; }
+        .contact-right .sib-multiselect__label {
+            display: flex !important; align-items: center !important; gap: 10px !important;
+            padding: 9px 10px !important; cursor: pointer !important;
+            font-size: 14px !important; color: #333 !important;
+            border-radius: 6px !important;
+        }
+        .contact-right .sib-multiselect__label:hover { background: #f5f4ff !important; }
+        .contact-right .checkbox { border: 1.5px solid #ddd !important; border-radius: 4px !important; width: 16px !important; height: 16px !important; }
+        .contact-right .sib-menu__apply { border-top: 1px solid #f0f0f0 !important; padding-top: 8px !important; margin-top: 6px !important; display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-end !important; gap: 8px !important; }
+        .contact-right .sib-menu__cancel-button { color: #999 !important; font-size: 13px !important; padding: 6px 10px !important; }
+        .contact-right .sib-menu__apply-button { background: #6C63FF !important; color: #fff !important; border-radius: 8px !important; padding: 7px 16px !important; font-size: 13px !important; font-weight: 600 !important; border: none !important; cursor: pointer !important; }
+        /* Submit button */
+        .contact-right .sib-form-block__button {
+            background: #6C63FF !important; border-radius: 10px !important;
+            padding: 13px 24px !important; font-family: 'Inter', sans-serif !important;
+            font-size: 15px !important; font-weight: 600 !important; width: 100% !important;
+            text-align: center !important; cursor: pointer !important; transition: background .2s !important; border: none !important;
         }
         .contact-right .sib-form-block__button:hover { background: #5a52e0 !important; }
 
+        /* Mobile: collapse email+phone grid to 1 column */
+        @media (max-width: 580px) {
+            .contact-right #sib-form { grid-template-columns: 1fr !important; }
+            .contact-right #sib-form > div { grid-column: 1 / -1 !important; }
+        }
         @media (max-width: 580px) {
             .contact-section { flex-direction: column; padding: 60px 30px; gap: 48px; }
             .contact-right { flex: none; width: 100%; max-width: none; }
@@ -697,14 +802,22 @@
             <li><a href="#testimonianze">Testimonianze</a></li>
         </ul>
     </nav>
-    <div class="social-icons">
-        <a href="https://www.facebook.com/alessandro.zanatta.1044" class="fb" target="_blank">f</a>
-        <a href="https://www.instagram.com/alessandrozanattaa/" class="ig" target="_blank">
-            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.2c3.2 0 3.6 0 4.8.1 1.2.1 1.8.2 2.2.4.6.2 1 .5 1.4.9.4.4.7.8.9 1.4.2.4.4 1 .4 2.2.1 1.3.1 1.6.1 4.8s0 3.6-.1 4.8c-.1 1.2-.2 1.8-.4 2.2-.2.6-.5 1-.9 1.4-.4.4-.8.7-1.4.9-.4.2-1 .4-2.2.4-1.3.1-1.6.1-4.8.1s-3.6 0-4.8-.1c-1.2-.1-1.8-.2-2.2-.4-.6-.2-1-.5-1.4-.9-.4-.4-.7-.8-.9-1.4-.2-.4-.4-1-.4-2.2C2.2 15.6 2.2 15.2 2.2 12s0-3.6.1-4.8c.1-1.2.2-1.8.4-2.2.2-.6.5-1 .9-1.4.4-.4.8-.7 1.4-.9.4-.2 1-.4 2.2-.4C8.4 2.2 8.8 2.2 12 2.2zM12 0C8.7 0 8.3 0 7.1.1 5.8.1 4.9.3 4.1.6c-.8.3-1.5.7-2.1 1.3C1.3 2.6.9 3.3.6 4.1.3 4.9.1 5.8.1 7.1 0 8.3 0 8.7 0 12s0 3.7.1 4.9c.1 1.3.2 2.2.5 3 .3.8.7 1.5 1.3 2.1.7.7 1.3 1.1 2.1 1.3.8.3 1.7.5 3 .5C8.3 24 8.7 24 12 24s3.7 0 4.9-.1c1.3-.1 2.2-.2 3-.5.8-.3 1.5-.7 2.1-1.3.7-.7 1.1-1.3 1.3-2.1.3-.8.5-1.7.5-3 .1-1.2.1-1.6.1-4.9s0-3.7-.1-4.9c-.1-1.3-.2-2.2-.5-3-.3-.8-.7-1.5-1.3-2.1C21.4 1.3 20.7.9 19.9.6c-.8-.3-1.7-.5-3-.5C15.7 0 15.3 0 12 0zm0 5.8a6.2 6.2 0 100 12.4 6.2 6.2 0 000-12.4zM12 16a4 4 0 110-8 4 4 0 010 8zm6.4-10.8a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8z"/></svg>
-        </a>
-        <a href="https://www.linkedin.com/in/alessandro-zanatta-85a604228" class="li" target="_blank">in</a>
-    </div>
+    <a href="#contattami-form" class="btn-primary header-cta">Prenota una consulenza</a>
+    <button class="hamburger" id="hamburger" aria-label="Apri menu">
+        <span></span><span></span><span></span>
+    </button>
 </header>
+<div class="mobile-menu" id="mobileMenu">
+    <ul>
+        <li><a href="#metodo">Metodo</a></li>
+        <li><a href="#chi-sono">Chi sono</a></li>
+        <li><a href="#contattami-form">Contattami</a></li>
+        <li><a href="#testimonianze">Testimonianze</a></li>
+    </ul>
+    <div class="mobile-cta">
+        <a href="#contattami-form" class="btn-primary">Prenota una consulenza</a>
+    </div>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -756,7 +869,7 @@
     <div class="obiezione-inner">
         <span class="obiezione-eyebrow">Il problema reale</span>
         <h2>"Ho già investito nel digitale. Ho speso tanto, ma i risultati non sono mai stati all'altezza."</h2>
-        <p class="obiezione-subtitle">Se sei arrivato fin qui, probabilmente hai già vissuto questa storia. Non è colpa tua — e non è colpa degli strumenti. <strong style="color:#fff">Il problema è che nessuno ti ha mai costruito un sistema.</strong></p>
+        <p class="obiezione-subtitle">Se sei arrivato fin qui, probabilmente hai già vissuto questa storia. Non è colpa tua e non è colpa degli strumenti. <strong style="color:#fff">Il problema è che nessuno ti ha mai costruito un sistema.</strong></p>
         <div class="obiezione-blocks">
             <div class="obiezione-block">
                 <div class="obiezione-icon-row">
@@ -789,8 +902,8 @@
                 <p>Sapere esattamente quanto costa acquisire un cliente, per poter scalare con controllo invece di sperare</p>
             </div>
         </div>
-        <p class="obiezione-close">Quando questi tre elementi sono allineati, smetti di sentirti confuso. Inizi a capire cosa succede, perché succede, e come migliorarlo. Il digitale smette di essere una voce di costo e diventa una leva di crescita. È esattamente questo che costruiamo nella consulenza gratuita.</p>
-        <a href="#contattami-form" class="btn-primary">Parliamone — prenota la tua consulenza gratuita</a>
+        <p class="obiezione-close">Quando questi tre elementi sono allineati, smetti di sentirti confuso. Inizi a capire cosa succede, perché succede e come migliorarlo. Il digitale smette di essere una voce di costo e diventa una leva di crescita.</p>
+        <a href="#contattami-form" class="btn-primary">Prenota la tua Consulenza Gratuita</a>
     </div>
 </section>
 
@@ -837,7 +950,7 @@
             <h3><span class="col-icon">✓</span> Per chi è</h3>
             <ul>
                 <li>Hai un business nel fitness o nel benessere con un'offerta già validata e clienti reali</li>
-                <li>Hai già investito in digitale — inserzioni, agenzie, consulenti — ma senza vedere un sistema coerente</li>
+                <li>Hai già investito in digitale: inserzioni, agenzie, consulenti, ma senza vedere un sistema coerente</li>
                 <li>Hai la sensazione di spendere budget senza capire davvero cosa funziona e perché</li>
                 <li>Sai che il digitale potrebbe darti molto di più, ma non sai da dove ripartire con metodo</li>
                 <li>Vuoi smettere di improvvisare e costruire un flusso di acquisizione clienti che scala</li>
@@ -1234,6 +1347,22 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     });
 });
 
+// Hamburger menu
+(function() {
+    var btn = document.getElementById('hamburger');
+    var menu = document.getElementById('mobileMenu');
+    btn.addEventListener('click', function() {
+        btn.classList.toggle('open');
+        menu.classList.toggle('open');
+    });
+    menu.querySelectorAll('a').forEach(function(a) {
+        a.addEventListener('click', function() {
+            btn.classList.remove('open');
+            menu.classList.remove('open');
+        });
+    });
+})();
+
 // Testimonial carousel
 (function() {
     const track   = document.getElementById('testimonialTrack');
@@ -1356,6 +1485,20 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       });
     }, { threshold: 0.1 });
     observer.observe(formSection);
+  })();
+
+  // Fix placeholder campo telefono Brevo (da "SMS" a "+39 333 000 0000")
+  (function fixPhonePlaceholder() {
+    function tryFix() {
+      var inp = document.querySelector('.sib-sms-select__phone-number');
+      if (inp) { inp.placeholder = '+39 333 000 0000'; return; }
+      setTimeout(tryFix, 300);
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', tryFix);
+    } else {
+      tryFix();
+    }
   })();
 </script>
 

@@ -367,15 +367,16 @@
         .metodo-card p { font-size: 15px; color: #666; line-height: 1.7; text-align: left; }
 
         /* ── TESTIMONIALS CAROUSEL ── */
-        .testimonials { padding: 80px 60px; text-align: center; }
+        .testimonials { padding: 80px 60px; text-align: center; background: #fff; }
         .testimonials h2 { font-family: 'Playfair Display', serif; font-size: 40px; margin-bottom: 40px; }
         .carousel-wrapper { overflow: hidden; }
         .testimonial-slides {
             display: flex;
-            transition: transform .45s ease;
+            transition: transform .4s ease;
+            will-change: transform;
         }
         .testimonial-slide {
-            min-width: 100%;
+            flex-shrink: 0;
             display: flex;
             gap: 24px;
             justify-content: center;
@@ -967,7 +968,8 @@
             .hero h1 { font-size: 36px; }
             .nav-links { display: none; }
             .testimonials { padding: 60px 16px; }
-            .testimonial-card { max-width: 100%; }
+            .testimonial-slide { padding: 0 4px; box-sizing: border-box; }
+            .testimonial-card { max-width: 100%; box-sizing: border-box; }
         }
     </style>
 </head>
@@ -1605,6 +1607,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
 
     function buildSlides() {
         const isMobile = window.innerWidth < 768;
+        const slideW = wrapper.offsetWidth;
         track.innerHTML = '';
         dotsEl.innerHTML = '';
         current = 0;
@@ -1618,6 +1621,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         groups.forEach(group => {
             const slide = document.createElement('div');
             slide.className = 'testimonial-slide';
+            slide.style.width = slideW + 'px';
             group.forEach(card => slide.appendChild(card.cloneNode(true)));
             track.appendChild(slide);
         });
@@ -1632,25 +1636,41 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         goTo(0);
     }
 
-    function goTo(page) {
-        current = page;
-        const slideWidth = track.parentElement.offsetWidth;
-        track.style.transform = `translateX(-${page * slideWidth}px)`;
+    const wrapper = track.parentElement;
+    let slideWidth = 0;
+
+    function updateUI() {
         dotsEl.querySelectorAll('button').forEach((b, i) =>
-            b.classList.toggle('active', i === page)
+            b.classList.toggle('active', i === current)
         );
         prevBtn.disabled = current === 0;
         nextBtn.disabled = current === pages - 1;
     }
 
+    function goTo(page) {
+        current = page;
+        slideWidth = wrapper.offsetWidth;
+        track.style.transform = `translateX(-${current * slideWidth}px)`;
+        updateUI();
+    }
+
     prevBtn.addEventListener('click', () => { if (current > 0) goTo(current - 1); });
     nextBtn.addEventListener('click', () => { if (current < pages - 1) goTo(current + 1); });
 
-    // Swipe touch su mobile
-    let touchStartX = 0;
-    const wrapper = track.parentElement;
-    wrapper.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    // Swipe touch — distingue orizzontale da verticale
+    let touchStartX = 0, touchStartY = 0, isSwiping = false;
+    wrapper.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+        isSwiping = false;
+    }, { passive: true });
+    wrapper.addEventListener('touchmove', e => {
+        const dx = Math.abs(e.touches[0].clientX - touchStartX);
+        const dy = Math.abs(e.touches[0].clientY - touchStartY);
+        if (!isSwiping && dx > dy && dx > 8) isSwiping = true;
+    }, { passive: true });
     wrapper.addEventListener('touchend', e => {
+        if (!isSwiping) return;
         const diff = touchStartX - e.changedTouches[0].clientX;
         if (Math.abs(diff) > 40) {
             if (diff > 0 && current < pages - 1) goTo(current + 1);
@@ -1663,7 +1683,18 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     let resizeTimer;
     window.addEventListener('resize', () => {
         clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(buildSlides, 200);
+        resizeTimer = setTimeout(() => {
+            const wasMobile = pages > 2;
+            const isMobile = window.innerWidth < 768;
+            if (wasMobile !== isMobile) {
+                buildSlides(); // cambia layout mobile/desktop → reset
+            } else {
+                slideWidth = wrapper.offsetWidth;
+                track.style.transition = 'none';
+                track.style.transform = `translateX(-${current * slideWidth}px)`;
+                setTimeout(() => { track.style.transition = ''; }, 50);
+            }
+        }, 200);
     });
 })();
 </script>

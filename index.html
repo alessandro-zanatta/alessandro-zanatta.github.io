@@ -1864,7 +1864,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
                     <input type="text" id="qNome" placeholder="Nome e cognome *" required>
                     <input type="text" id="qAzienda" placeholder="Nome dell'azienda *" required>
                     <input type="email" id="qEmail" placeholder="Email *" required>
-                    <input type="tel" id="qTel" placeholder="Telefono (opzionale)">
+                    <input type="tel" id="qTel" placeholder="Telefono *" required>
+                    <span id="qTelError" style="display:none;font-size:12px;color:#ff4455;margin-top:4px;font-family:'Inter',sans-serif;">Numero non valido — inserisci almeno 9 cifre (es. 347 123 4567)</span>
                     <button type="submit" class="popup-cta">Prenota la consulenza gratuita →</button>
                 </form>
                 <button class="quiz-back" data-back="1">← Indietro</button>
@@ -2015,14 +2016,25 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       var nome   = document.getElementById('qNome');
       var azienda = document.getElementById('qAzienda');
       var email  = document.getElementById('qEmail');
+      var telInput = document.getElementById('qTel');
+      var telError = document.getElementById('qTelError');
       nome.classList.remove('error'); azienda.classList.remove('error'); email.classList.remove('error');
+      telInput.classList.remove('error'); telError.style.display = 'none';
       if (!nome.value.trim())    nome.classList.add('error');
       if (!azienda.value.trim()) azienda.classList.add('error');
       if (!email.value.trim())   email.classList.add('error');
-      if (!nome.value.trim() || !azienda.value.trim() || !email.value.trim()) return;
 
-      // ── Invia il lead a Make.com → Brevo ──
-      var tel = document.getElementById('qTel').value.trim();
+      // Validazione telefono (obbligatorio)
+      var tel = telInput.value.trim();
+      var digits = tel.replace(/\D/g, '');
+      if (!tel || digits.length < 9 || digits.length > 13) {
+        telInput.classList.add('error');
+        telError.style.display = 'block';
+        if (!tel) telError.textContent = 'Il telefono è obbligatorio';
+        else telError.textContent = 'Numero non valido — inserisci almeno 9 cifre (es. 347 123 4567)';
+        return;
+      }
+      if (!nome.value.trim() || !azienda.value.trim() || !email.value.trim()) return;
       var nomeParts = nome.value.trim().split(' ');
       var payload = {
         email:         email.value.trim(),

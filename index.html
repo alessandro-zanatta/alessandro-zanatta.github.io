@@ -2029,13 +2029,13 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         firstname:     nomeParts[0] || '',
         lastname:      nomeParts.slice(1).join(' ') || '',
         company:       azienda.value.trim(),
-        phone:         tel,
         quiz_business: answers.business || '',
         quiz_sistema:  answers.sistema  || '',
         quiz_budget:   answers.budget   || '',
         quiz_roi:      answers.roi      || '',
         quiz_goal:     answers.goal     || ''
       };
+      if (tel) payload.phone = tel;
       fetch('https://hook.eu1.make.com/dm1pwwejy2j9whq6bsw4bvojfzo7ewdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

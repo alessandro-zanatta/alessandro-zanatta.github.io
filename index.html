@@ -1749,7 +1749,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   var AUTOHIDE = Boolean(0);
 </script>
 <script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
-  <script src="config.js"></script>
 
 <script>
   // Meta Pixel – evento Lead al successo del form Brevo (una sola volta)
@@ -1901,7 +1900,6 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   })();
 
   // Popup Quiz Consulenza — appare dopo 15 secondi (una volta per sessione)
-  // Chiave Brevo caricata da config.js (file escluso da git)
   (function initPopupQuiz() {
     if (sessionStorage.getItem('popupDismissed')) return;
 
@@ -2023,34 +2021,26 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       if (!email.value.trim())   email.classList.add('error');
       if (!nome.value.trim() || !azienda.value.trim() || !email.value.trim()) return;
 
-      // ── Invia il lead a Brevo REST API ──
+      // ── Invia il lead a Make.com → Brevo ──
       var tel = document.getElementById('qTel').value.trim();
       var nomeParts = nome.value.trim().split(' ');
-      var attrs = {
-        FIRSTNAME:     nomeParts[0] || '',
-        LASTNAME:      nomeParts.slice(1).join(' ') || '',
-        COMPANY:       azienda.value.trim(),
-        QUIZ_BUSINESS: answers.business || '',
-        QUIZ_SISTEMA:  answers.sistema  || '',
-        QUIZ_BUDGET:   answers.budget   || '',
-        QUIZ_ROI:      answers.roi      || '',
-        QUIZ_GOAL:     answers.goal     || ''
-      };
-      if (tel) attrs.SMS = tel;
       var payload = {
-        email: email.value.trim(),
-        attributes: attrs,
-        listIds: [3],
-        updateEnabled: true
+        email:         email.value.trim(),
+        firstname:     nomeParts[0] || '',
+        lastname:      nomeParts.slice(1).join(' ') || '',
+        company:       azienda.value.trim(),
+        phone:         tel,
+        quiz_business: answers.business || '',
+        quiz_sistema:  answers.sistema  || '',
+        quiz_budget:   answers.budget   || '',
+        quiz_roi:      answers.roi      || '',
+        quiz_goal:     answers.goal     || ''
       };
-      fetch('https://api.brevo.com/v3/contacts', {
+      fetch('https://hook.eu1.make.com/dm1pwwejy2j9whq6bsw4bvojfzo7ewdf', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'api-key': window._BREVO_KEY || ''
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
-      }).catch(function(err) { console.warn('Brevo error:', err); });
+      }).catch(function(err) { console.warn('Make webhook error:', err); });
 
       goTo(7, true);
     });

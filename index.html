@@ -1749,6 +1749,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   var AUTOHIDE = Boolean(0);
 </script>
 <script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
+  <script src="config.js"></script>
 
 <script>
   // Meta Pixel – evento Lead al successo del form Brevo (una sola volta)
@@ -1900,6 +1901,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   })();
 
   // Popup Quiz Consulenza — appare dopo 15 secondi (una volta per sessione)
+  // Chiave Brevo caricata da config.js (file escluso da git)
   (function initPopupQuiz() {
     if (sessionStorage.getItem('popupDismissed')) return;
 
@@ -2021,9 +2023,9 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       if (!email.value.trim())   email.classList.add('error');
       if (!nome.value.trim() || !azienda.value.trim() || !email.value.trim()) return;
 
-      // ── Invia il lead a Brevo ──
-      var nomeParts = nome.value.trim().split(' ');
+      // ── Invia il lead a Brevo REST API ──
       var tel = document.getElementById('qTel').value.trim();
+      var nomeParts = nome.value.trim().split(' ');
       var attrs = {
         FIRSTNAME:     nomeParts[0] || '',
         LASTNAME:      nomeParts.slice(1).join(' ') || '',
@@ -2034,7 +2036,7 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         QUIZ_ROI:      answers.roi      || '',
         QUIZ_GOAL:     answers.goal     || ''
       };
-      if (tel) attrs.SMS = tel; // SMS è identificatore univoco: invialo solo se compilato
+      if (tel) attrs.SMS = tel;
       var payload = {
         email: email.value.trim(),
         attributes: attrs,

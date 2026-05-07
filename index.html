@@ -2035,7 +2035,10 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
         quiz_roi:      answers.roi      || '',
         quiz_goal:     answers.goal     || ''
       };
-      if (tel) payload.phone = tel;
+      if (tel) {
+        var digits = tel.replace(/\D/g, ''); // solo cifre
+        payload.phone = digits.startsWith('39') ? digits : '39' + digits;
+      }
       fetch('https://hook.eu1.make.com/dm1pwwejy2j9whq6bsw4bvojfzo7ewdf', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

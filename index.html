@@ -673,10 +673,11 @@
         @media (max-width: 768px) { .sticky-cta { display: block; } }
 
         /* ── POPUP ── */
+        /* ── POPUP QUIZ ── */
         .popup-overlay {
             position: fixed; inset: 0;
-            background: rgba(26,26,46,0.55);
-            backdrop-filter: blur(4px);
+            background: rgba(26,26,46,0.6);
+            backdrop-filter: blur(6px);
             z-index: 9999;
             display: flex; align-items: center; justify-content: center;
             padding: 20px;
@@ -685,59 +686,91 @@
         }
         .popup-overlay.visible { opacity: 1; pointer-events: all; }
         .popup-box {
-            background: #fff;
-            border-radius: 24px;
-            padding: 48px 40px 40px;
-            max-width: 480px; width: 100%;
-            position: relative;
-            box-shadow: 0 24px 80px rgba(108,99,255,0.18);
-            transform: translateY(24px);
-            transition: transform .35s ease;
-            text-align: center;
+            background: #fff; border-radius: 24px;
+            max-width: 520px; width: 100%; position: relative;
+            box-shadow: 0 24px 80px rgba(108,99,255,0.22);
+            transform: translateY(24px); transition: transform .35s ease;
+            overflow: hidden;
         }
         .popup-overlay.visible .popup-box { transform: translateY(0); }
         .popup-close {
-            position: absolute; top: 16px; right: 20px;
+            position: absolute; top: 14px; right: 18px;
             background: none; border: none; cursor: pointer;
-            font-size: 22px; color: #aaa; line-height: 1;
-            transition: color .2s;
+            font-size: 20px; color: #bbb; line-height: 1;
+            transition: color .2s; z-index: 10;
         }
         .popup-close:hover { color: #555; }
-        .popup-badge {
-            display: inline-block;
-            background: #ede9ff; color: #6C63FF;
-            font-size: 12px; font-weight: 700; letter-spacing: .08em;
-            text-transform: uppercase; border-radius: 20px;
-            padding: 5px 14px; margin-bottom: 20px;
+        /* Progress bar */
+        .quiz-progress-wrap { height: 4px; background: #f0eeff; }
+        .quiz-progress-bar { height: 4px; background: #6C63FF; transition: width .4s ease; width: 0%; }
+        /* Steps wrapper */
+        .quiz-steps { position: relative; overflow: hidden; transition: height .35s ease; }
+        /* Each step */
+        .quiz-step {
+            position: absolute; top: 0; left: 0; right: 0;
+            padding: 36px 40px 32px;
+            opacity: 0; transform: translateX(50px);
+            pointer-events: none; text-align: center;
         }
-        .popup-box h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 28px; color: #1a1a2e;
-            margin-bottom: 14px; line-height: 1.3;
+        /* active state managed via inline styles in JS */
+        /* Step counter */
+        .quiz-step-num { font-size: 11px; font-weight: 700; color: #6C63FF; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 12px; }
+        /* Question */
+        .quiz-step h2 { font-family: 'Playfair Display', serif; font-size: 22px; color: #1a1a2e; margin-bottom: 22px; line-height: 1.35; }
+        /* Options */
+        .quiz-options { display: flex; flex-direction: column; gap: 9px; margin-bottom: 18px; text-align: left; }
+        .quiz-option {
+            display: flex; align-items: center; gap: 12px;
+            padding: 12px 16px; border: 1.5px solid #e8e6f7; border-radius: 12px;
+            background: #fff; cursor: pointer; font-size: 14px; font-weight: 500; color: #444;
+            transition: border-color .15s, background .15s, color .15s; text-align: left;
+            font-family: 'Inter', sans-serif;
         }
-        .popup-box p {
-            font-size: 15px; color: #666;
-            line-height: 1.65; margin-bottom: 28px;
+        .quiz-option::before {
+            content: ''; flex-shrink: 0; width: 17px; height: 17px; border-radius: 50%;
+            border: 2px solid #d0ceee; transition: background .15s, border-color .15s;
         }
+        .quiz-option:hover { border-color: #6C63FF; background: #f5f4ff; color: #6C63FF; }
+        .quiz-option:hover::before { border-color: #6C63FF; }
+        .quiz-option.selected { border-color: #6C63FF; background: #f0eeff; color: #6C63FF; }
+        .quiz-option.selected::before { background: #6C63FF; border-color: #6C63FF; }
+        /* Badge */
+        .popup-badge { display: inline-block; background: #ede9ff; color: #6C63FF; font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; border-radius: 20px; padding: 5px 14px; margin-bottom: 16px; }
+        /* Text */
+        .quiz-step p { font-size: 15px; color: #666; line-height: 1.65; margin-bottom: 22px; }
+        /* CTA */
         .popup-cta {
             display: block; width: 100%;
             background: #6C63FF; color: #fff;
-            font-size: 16px; font-weight: 700;
-            padding: 15px 24px; border-radius: 12px;
-            text-decoration: none; margin-bottom: 14px;
+            font-size: 15px; font-weight: 700; font-family: 'Inter', sans-serif;
+            padding: 14px 24px; border-radius: 12px;
+            text-decoration: none; border: none; cursor: pointer; margin-bottom: 12px;
             transition: background .2s, transform .2s;
         }
         .popup-cta:hover { background: #5a52e0; transform: translateY(-2px); }
-        .popup-dismiss {
-            display: block; font-size: 13px; color: #aaa;
+        /* Dismiss & back */
+        .popup-dismiss, .quiz-back {
+            display: block; font-size: 13px; color: #bbb;
             cursor: pointer; background: none; border: none;
-            text-decoration: underline; margin: 0 auto;
-            transition: color .2s;
+            text-decoration: underline; margin: 4px auto 0;
+            transition: color .2s; font-family: 'Inter', sans-serif;
         }
-        .popup-dismiss:hover { color: #666; }
+        .popup-dismiss:hover, .quiz-back:hover { color: #666; }
+        /* Contact form */
+        .quiz-form { display: flex; flex-direction: column; gap: 10px; margin-bottom: 14px; text-align: left; }
+        .quiz-form input {
+            padding: 12px 15px; border: 1.5px solid #e8e6f7; border-radius: 12px;
+            font-size: 14px; font-family: 'Inter', sans-serif; color: #333; outline: none;
+            transition: border-color .15s; background: #fff;
+        }
+        .quiz-form input:focus { border-color: #6C63FF; }
+        .quiz-form input.error { border-color: #ff4455; }
+        /* Thank-you emoji */
+        .quiz-emoji { font-size: 52px; display: block; margin-bottom: 16px; }
         @media (max-width: 480px) {
-            .popup-box { padding: 40px 24px 32px; }
-            .popup-box h2 { font-size: 24px; }
+            .quiz-step { padding: 28px 20px 22px; }
+            .quiz-step h2 { font-size: 19px; margin-bottom: 18px; }
+            .quiz-option { font-size: 13px; padding: 11px 13px; }
         }
 
         /* ── CONTACT SECTION ── */
@@ -1739,17 +1772,115 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
   })();
 </script>
 
-<!-- POPUP CONSULENZA -->
+<!-- POPUP QUIZ CONSULENZA -->
 <div class="popup-overlay" id="consultaPopup" role="dialog" aria-modal="true">
     <div class="popup-box">
         <button class="popup-close" id="popupClose" aria-label="Chiudi">✕</button>
-        <div class="popup-badge">🎁 Prenota la consulenza gratuita</div>
-        <h2>Analizziamo assieme il tuo sistema di acquisizione</h2>
-        <p>Prenota una <strong>consulenza gratuita</strong> con il team di Twist: analizziamo insieme la tua situazione e ti mostriamo come possiamo far crescere il tuo business con il digitale.</p>
-        <a href="#contattami-form" class="popup-cta" id="popupCta">Prenota la consulenza gratuita →</a>
-        <button class="popup-dismiss" id="popupDismiss">No grazie, ci penso ancora</button>
-    </div>
-</div>
+        <div class="quiz-progress-wrap"><div class="quiz-progress-bar" id="quizProgress"></div></div>
+        <div class="quiz-steps" id="quizSteps">
+
+            <!-- Step 0: Intro -->
+            <div class="quiz-step" id="qStep0">
+                <div class="popup-badge">🎁 Analisi gratuita</div>
+                <h2>Analizza il tuo sistema di acquisizione clienti</h2>
+                <p>Rispondi a <strong>5 domande veloci</strong>: capiamo insieme se e come possiamo far crescere il tuo business con il digitale.</p>
+                <button class="popup-cta" id="quizStart">Inizia l'analisi gratuita →</button>
+                <button class="popup-dismiss" id="popupDismiss">No grazie, ci penso ancora</button>
+            </div>
+
+            <!-- Step 1: Tipo attività -->
+            <div class="quiz-step" id="qStep1">
+                <div class="quiz-step-num">1 di 5</div>
+                <h2>Che tipo di attività hai?</h2>
+                <div class="quiz-options">
+                    <button class="quiz-option" data-q="business" data-v="servizi">Azienda di servizi</button>
+                    <button class="quiz-option" data-q="business" data-v="ecommerce">E-commerce</button>
+                    <button class="quiz-option" data-q="business" data-v="locale">Rivenditore locale</button>
+                    <button class="quiz-option" data-q="business" data-v="infobusiness">Infobusiness / Coaching</button>
+                    <button class="quiz-option" data-q="business" data-v="fitness">Palestra / Fitness &amp; Wellness</button>
+                    <button class="quiz-option" data-q="business" data-v="altro">Altro</button>
+                </div>
+                <button class="quiz-back" data-back="1">← Indietro</button>
+            </div>
+
+            <!-- Step 2: Sistema acquisizione -->
+            <div class="quiz-step" id="qStep2">
+                <div class="quiz-step-num">2 di 5</div>
+                <h2>Hai già un sistema di acquisizione clienti definito?</h2>
+                <div class="quiz-options">
+                    <button class="quiz-option" data-q="sistema" data-v="si-funziona">Sì, funziona bene</button>
+                    <button class="quiz-option" data-q="sistema" data-v="si-insoddisfatto">Sì, ma non sono soddisfatto dei risultati</button>
+                    <button class="quiz-option" data-q="sistema" data-v="costruendo">No, sto cercando di costruirne uno</button>
+                    <button class="quiz-option" data-q="sistema" data-v="no">No, non so da dove iniziare</button>
+                </div>
+                <button class="quiz-back" data-back="1">← Indietro</button>
+            </div>
+
+            <!-- Step 3: Investimento ads -->
+            <div class="quiz-step" id="qStep3">
+                <div class="quiz-step-num">3 di 5</div>
+                <h2>Stai investendo in pubblicità online ogni mese? Se sì, specifica un range.</h2>
+                <div class="quiz-options">
+                    <button class="quiz-option" data-q="budget" data-v="no">No, non investo ancora in ads</button>
+                    <button class="quiz-option" data-q="budget" data-v="0-1000">Sì, 0 – 1.000€/mese</button>
+                    <button class="quiz-option" data-q="budget" data-v="1000-5000">Sì, 1.000€ – 5.000€/mese</button>
+                    <button class="quiz-option" data-q="budget" data-v="5000-20000">Sì, 5.000€ – 20.000€/mese</button>
+                    <button class="quiz-option" data-q="budget" data-v="20000+">Sì, oltre 20.000€/mese</button>
+                </div>
+                <button class="quiz-back" data-back="1">← Indietro</button>
+            </div>
+
+            <!-- Step 4: ROI -->
+            <div class="quiz-step" id="qStep4">
+                <div class="quiz-step-num">4 di 5</div>
+                <h2>Sai esattamente quanto ti ritorna ogni mese da quello che spendi?</h2>
+                <div class="quiz-options">
+                    <button class="quiz-option" data-q="roi" data-v="si">Sì, ho i dati chiari</button>
+                    <button class="quiz-option" data-q="roi" data-v="parziale">In parte, ma non controllo tutto</button>
+                    <button class="quiz-option" data-q="roi" data-v="no">No, non lo so con precisione</button>
+                </div>
+                <button class="quiz-back" data-back="1">← Indietro</button>
+            </div>
+
+            <!-- Step 5: Obiettivo -->
+            <div class="quiz-step" id="qStep5">
+                <div class="quiz-step-num">5 di 5</div>
+                <h2>Qual è il tuo obiettivo principale per i prossimi 6 mesi?</h2>
+                <div class="quiz-options">
+                    <button class="quiz-option" data-q="goal" data-v="clienti">Acquisire più clienti</button>
+                    <button class="quiz-option" data-q="goal" data-v="roi">Migliorare il ritorno dalla pubblicità</button>
+                    <button class="quiz-option" data-q="goal" data-v="brand">Costruire un brand riconoscibile</button>
+                    <button class="quiz-option" data-q="goal" data-v="tutto">Tutto quanto sopra</button>
+                </div>
+                <button class="quiz-back" data-back="1">← Indietro</button>
+            </div>
+
+            <!-- Step 6: Form -->
+            <div class="quiz-step" id="qStep6">
+                <div class="popup-badge">✅ Analisi completata</div>
+                <h2>Prenota la tua consulenza gratuita</h2>
+                <p>Lasciaci i tuoi contatti: ti richiameremo entro <strong>24 ore</strong> per analizzare insieme la tua situazione.</p>
+                <form class="quiz-form" id="quizForm" novalidate>
+                    <input type="text" id="qNome" placeholder="Nome e cognome *" required>
+                    <input type="text" id="qAzienda" placeholder="Nome dell'azienda *" required>
+                    <input type="email" id="qEmail" placeholder="Email *" required>
+                    <input type="tel" id="qTel" placeholder="Telefono (opzionale)">
+                    <button type="submit" class="popup-cta">Prenota la consulenza gratuita →</button>
+                </form>
+                <button class="quiz-back" data-back="1">← Indietro</button>
+            </div>
+
+            <!-- Step 7: Thank you -->
+            <div class="quiz-step" id="qStep7">
+                <span class="quiz-emoji">🎉</span>
+                <h2>Perfetto! Ti contatteremo a breve</h2>
+                <p>Abbiamo ricevuto le tue informazioni. Il team di Twist ti contatterà entro <strong>24 ore</strong> per la consulenza gratuita.</p>
+                <button class="popup-cta" id="quizThankClose">Chiudi</button>
+            </div>
+
+        </div><!-- /quiz-steps -->
+    </div><!-- /popup-box -->
+</div><!-- /popup-overlay -->
 
 <!-- STICKY MOBILE CTA -->
 <a href="#contattami-form" class="sticky-cta" id="stickyCta">Prenota la consulenza gratuita →</a>
@@ -1768,25 +1899,179 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     observer.observe(formSection);
   })();
 
-  // Popup consulenza — appare dopo 15 secondi (una volta per sessione)
-  (function initPopup() {
+  // Popup Quiz Consulenza — appare dopo 15 secondi (una volta per sessione)
+  (function initPopupQuiz() {
     if (sessionStorage.getItem('popupDismissed')) return;
-    var overlay = document.getElementById('consultaPopup');
-    var closeBtn = document.getElementById('popupClose');
+
+    var overlay    = document.getElementById('consultaPopup');
+    var closeBtn   = document.getElementById('popupClose');
     var dismissBtn = document.getElementById('popupDismiss');
-    var ctaBtn = document.getElementById('popupCta');
-    function showPopup() { overlay.classList.add('visible'); }
+    var bar        = document.getElementById('quizProgress');
+    var wrap       = document.getElementById('quizSteps');
+    var steps      = Array.from(wrap.querySelectorAll('.quiz-step'));
+    var answers    = {};
+    var cur        = 0;
+    var TOTAL_Q    = 5;
+    var busy       = false;
+
+    // Active/hidden states managed exclusively via inline styles
+    var VISIBLE = 'opacity:1;transform:none;pointer-events:all;';
+    var HIDDEN  = ''; // CSS default: opacity:0, translateX(50px), pointer-events:none
+
+    function setBar(step) {
+      bar.style.width = (step === 0 ? 0 : Math.round(step / (TOTAL_Q + 1) * 100)) + '%';
+    }
+
+    function measureH(el) {
+      // Measure height with natural transform so we get accurate value
+      el.style.cssText = 'opacity:0;transform:none;pointer-events:none;transition:none;';
+      var h = el.offsetHeight;
+      el.style.cssText = HIDDEN;
+      return h;
+    }
+
+    function goTo(next, fwd) {
+      if (busy || next === cur || next < 0 || next >= steps.length) return;
+      busy = true;
+      var from = steps[cur], to = steps[next];
+      var dir  = fwd !== false ? 1 : -1;
+
+      // Defensive: reset all other steps to hidden
+      steps.forEach(function(s) { if (s !== from && s !== to) s.style.cssText = HIDDEN; });
+
+      // Measure 'to' height before animating
+      var targetH = measureH(to);
+
+      // Set 'to' starting position (no transition)
+      to.style.cssText = 'opacity:0;transform:translateX(' + (dir * 52) + 'px);pointer-events:none;transition:none;';
+      to.getBoundingClientRect(); // force reflow
+
+      // Enable transitions on both
+      var T = 'opacity .34s ease, transform .34s ease';
+      from.style.transition = T;
+      to.style.transition   = T;
+
+      // Animate container height
+      wrap.style.height = targetH + 'px';
+
+      // Exit 'from'
+      from.style.opacity       = '0';
+      from.style.transform     = 'translateX(' + (-dir * 52) + 'px)';
+      from.style.pointerEvents = 'none';
+
+      // Enter 'to'
+      to.style.opacity       = '1';
+      to.style.transform     = 'translateX(0)';
+      to.style.pointerEvents = 'all';
+
+      cur = next;
+      setBar(cur);
+
+      setTimeout(function() {
+        from.style.cssText = HIDDEN;
+        to.style.cssText   = VISIBLE;
+        wrap.style.height  = to.offsetHeight + 'px';
+        busy = false;
+      }, 420);
+    }
+
+    function showPopup() {
+      // Reset all steps, show step 0
+      steps.forEach(function(s) { s.style.cssText = HIDDEN; });
+      var s0 = steps[0];
+      s0.style.cssText = 'opacity:0;transform:none;pointer-events:none;transition:none;';
+      var h = s0.offsetHeight;
+      s0.style.cssText = VISIBLE;
+      wrap.style.height = h + 'px';
+      overlay.classList.add('visible');
+    }
+
     function hidePopup() {
       overlay.classList.remove('visible');
       sessionStorage.setItem('popupDismissed', '1');
     }
-    setTimeout(showPopup, 15000);
+
+    // Start button
+    document.getElementById('quizStart').addEventListener('click', function() { goTo(1, true); });
+
+    // Option click → save answer & auto-advance
+    wrap.addEventListener('click', function(e) {
+      var opt = e.target.closest('.quiz-option');
+      if (!opt || busy) return;
+      opt.closest('.quiz-options').querySelectorAll('.quiz-option').forEach(function(o) { o.classList.remove('selected'); });
+      opt.classList.add('selected');
+      answers[opt.dataset.q] = opt.dataset.v;
+      setTimeout(function() { goTo(cur + 1, true); }, 300);
+    });
+
+    // Back buttons
+    wrap.addEventListener('click', function(e) {
+      if (e.target.closest('[data-back]')) goTo(cur - 1, false);
+    });
+
+    // Form submit
+    document.getElementById('quizForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var nome   = document.getElementById('qNome');
+      var azienda = document.getElementById('qAzienda');
+      var email  = document.getElementById('qEmail');
+      nome.classList.remove('error'); azienda.classList.remove('error'); email.classList.remove('error');
+      if (!nome.value.trim())    nome.classList.add('error');
+      if (!azienda.value.trim()) azienda.classList.add('error');
+      if (!email.value.trim())   email.classList.add('error');
+      if (!nome.value.trim() || !azienda.value.trim() || !email.value.trim()) return;
+
+      // ── Invia il lead a Brevo ──
+      var nomeParts = nome.value.trim().split(' ');
+      var tel = document.getElementById('qTel').value.trim();
+      var attrs = {
+        FIRSTNAME:     nomeParts[0] || '',
+        LASTNAME:      nomeParts.slice(1).join(' ') || '',
+        COMPANY:       azienda.value.trim(),
+        QUIZ_BUSINESS: answers.business || '',
+        QUIZ_SISTEMA:  answers.sistema  || '',
+        QUIZ_BUDGET:   answers.budget   || '',
+        QUIZ_ROI:      answers.roi      || '',
+        QUIZ_GOAL:     answers.goal     || ''
+      };
+      if (tel) attrs.SMS = tel; // SMS è identificatore univoco: invialo solo se compilato
+      var payload = {
+        email: email.value.trim(),
+        attributes: attrs,
+        listIds: [3],
+        updateEnabled: true
+      };
+      fetch('https://api.brevo.com/v3/contacts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'api-key': window._BREVO_KEY || ''
+        },
+        body: JSON.stringify(payload)
+      }).catch(function(err) { console.warn('Brevo error:', err); });
+
+      goTo(7, true);
+    });
+
+    // Thank-you close
+    document.getElementById('quizThankClose').addEventListener('click', hidePopup);
+
+    // Close / dismiss / backdrop
     closeBtn.addEventListener('click', hidePopup);
     dismissBtn.addEventListener('click', hidePopup);
-    ctaBtn.addEventListener('click', hidePopup);
-    overlay.addEventListener('click', function(e) {
-      if (e.target === overlay) hidePopup();
+    overlay.addEventListener('click', function(e) { if (e.target === overlay) hidePopup(); });
+
+    // Resize: aggiorna altezza
+    window.addEventListener('resize', function() {
+      var s = steps[cur];
+      if (!s) return;
+      var prev = s.style.cssText;
+      s.style.cssText = 'opacity:0;transform:none;pointer-events:none;transition:none;';
+      wrap.style.height = s.offsetHeight + 'px';
+      s.style.cssText = prev;
     });
+
+    setTimeout(showPopup, 15000);
   })();
 
   // Team carousel — sincronizza pallini con lo scroll

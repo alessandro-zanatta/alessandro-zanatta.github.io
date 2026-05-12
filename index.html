@@ -1998,7 +1998,27 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       }, 420);
     }
 
+    // ── Body-lock: unico fix definitivo per iOS Safari cursor bug ──
+    var _bodyScrollY = 0;
+    function lockBody() {
+      _bodyScrollY = window.scrollY || window.pageYOffset;
+      document.body.style.position = 'fixed';
+      document.body.style.top      = '-' + _bodyScrollY + 'px';
+      document.body.style.left     = '0';
+      document.body.style.right    = '0';
+      document.body.style.overflow = 'hidden';
+    }
+    function unlockBody() {
+      document.body.style.position = '';
+      document.body.style.top      = '';
+      document.body.style.left     = '';
+      document.body.style.right    = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, _bodyScrollY);
+    }
+
     function showPopup() {
+      lockBody();
       // Reset all steps, show step 0
       steps.forEach(function(s) { s.style.cssText = HIDDEN; });
       var s0 = steps[0];
@@ -2010,10 +2030,15 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     }
 
     function hidePopup() {
+      // Prima blur per chiudere tastiera, poi sblocca body
+      if (document.activeElement && document.activeElement !== document.body) {
+        document.activeElement.blur();
+      }
       overlay.classList.remove('visible');
       sessionStorage.setItem('popupDismissed', '1');
-      // Rilascia il focus: chiude la tastiera su mobile
-      if (document.activeElement) document.activeElement.blur();
+      // Sblocca body e ripristina scroll — eseguito con piccolo ritardo
+      // per dare tempo all'animazione di uscita di partire
+      setTimeout(unlockBody, 50);
       // Reset form e messaggi di errore
       var form = document.getElementById('quizForm');
       if (form) {

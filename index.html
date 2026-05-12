@@ -683,6 +683,7 @@
             padding: 20px;
             opacity: 0; pointer-events: none;
             transition: opacity .35s ease;
+            overflow-y: auto;
         }
         .popup-overlay.visible { opacity: 1; pointer-events: all; }
         .popup-box {
@@ -691,6 +692,10 @@
             box-shadow: 0 24px 80px rgba(108,99,255,0.22);
             transform: translateY(24px); transition: transform .35s ease;
             overflow: hidden;
+        }
+        @media (max-width: 768px) {
+            .popup-overlay { align-items: flex-start; padding: 12px; }
+            .popup-box { border-radius: 16px; margin: auto; }
         }
         .popup-overlay.visible .popup-box { transform: translateY(0); }
         .popup-close {
@@ -1949,6 +1954,8 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     function goTo(next, fwd) {
       if (busy || next === cur || next < 0 || next >= steps.length) return;
       busy = true;
+      // Chiudi tastiera mobile prima di animare
+      if (document.activeElement) document.activeElement.blur();
       var from = steps[cur], to = steps[next];
       var dir  = fwd !== false ? 1 : -1;
 
@@ -2005,6 +2012,16 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     function hidePopup() {
       overlay.classList.remove('visible');
       sessionStorage.setItem('popupDismissed', '1');
+      // Rilascia il focus: chiude la tastiera su mobile
+      if (document.activeElement) document.activeElement.blur();
+      // Reset form e messaggi di errore
+      var form = document.getElementById('quizForm');
+      if (form) {
+        form.reset();
+        form.querySelectorAll('.error').forEach(function(el) { el.classList.remove('error'); });
+      }
+      var telErr = document.getElementById('qTelError');
+      if (telErr) telErr.style.display = 'none';
     }
 
     // Start button

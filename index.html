@@ -1006,7 +1006,12 @@
         }
         /* Previene zoom automatico iOS su input con font < 16px */
         @media (max-width: 768px) {
-            input, textarea, select, .input {
+            input[type="text"],
+            input[type="email"],
+            input[type="tel"],
+            input[type="number"],
+            input[type="password"],
+            textarea {
                 font-size: 16px !important;
             }
         }

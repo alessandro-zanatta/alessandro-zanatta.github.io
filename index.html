@@ -917,8 +917,8 @@
         }
         .contact-right .sib-multiselect__label:hover { background: #f0eeff !important; }
         .contact-right .checkbox { border: 1.5px solid #ddd !important; border-radius: 4px !important; width: 16px !important; height: 16px !important; flex-shrink: 0 !important; }
-        .contact-right .sib-menu__apply { border-top: 1px solid #f0f0f0 !important; padding-top: 8px !important; margin-top: 6px !important; display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: flex-end !important; gap: 8px !important; }
-        .contact-right .sib-menu__cancel-button { color: #999 !important; font-size: 13px !important; padding: 6px 10px !important; }
+        .contact-right .sib-menu__apply { display: none !important; }
+        .contact-right .sib-menu__cancel-button { display: none !important; }
         .contact-right .sib-menu__apply-button { background: #6C63FF !important; color: #fff !important; border-radius: 8px !important; padding: 7px 16px !important; font-size: 13px !important; font-weight: 600 !important; border: none !important; cursor: pointer !important; }
         /* Submit button */
         .contact-right .sib-form-block__button {
@@ -1599,12 +1599,16 @@
 
 <!-- Smooth scroll + Carousel -->
 <script>
-// Smooth scroll
+// Smooth scroll (compatibile con tutti i browser mobile)
 document.querySelectorAll('a[href^="#"]').forEach(a => {
     a.addEventListener('click', e => {
+        const href = a.getAttribute('href');
+        if (!href || href === '#') return;
         e.preventDefault();
-        const target = document.querySelector(a.getAttribute('href'));
-        if (target) target.scrollIntoView({ behavior: 'smooth' });
+        const target = document.querySelector(href);
+        if (!target) return;
+        const y = target.getBoundingClientRect().top + window.pageYOffset - 70;
+        window.scrollTo({ top: y, behavior: 'smooth' });
     });
 });
 
@@ -2080,6 +2084,20 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     });
 
     setTimeout(showPopup, 15000);
+
+  })();
+
+  // ADV multiselect: auto-applica la scelta senza dover cliccare "Applica"
+  (function advAutoApply() {
+    var advMenu = document.querySelector('#sib-form .sib-multiselect .sib-menu');
+    if (!advMenu) return;
+    advMenu.addEventListener('click', function(e) {
+      if (!e.target.closest('.sib-menu__item')) return;
+      setTimeout(function() {
+        var applyBtn = advMenu.querySelector('.sib-menu__apply-button');
+        if (applyBtn) applyBtn.click();
+      }, 80);
+    });
   })();
 
   // Team carousel — sincronizza pallini con lo scroll

@@ -1998,8 +1998,9 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       }, 420);
     }
 
-    // ── Body-lock: unico fix definitivo per iOS Safari cursor bug ──
+    // ── Body-lock: fix iOS Safari cursor-displacement + form-blocking ──
     var _bodyScrollY = 0;
+
     function lockBody() {
       _bodyScrollY = window.scrollY || window.pageYOffset;
       document.body.style.position = 'fixed';
@@ -2008,17 +2009,25 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
       document.body.style.right    = '0';
       document.body.style.overflow = 'hidden';
     }
+
     function unlockBody() {
+      var y = _bodyScrollY;
       document.body.style.position = '';
       document.body.style.top      = '';
       document.body.style.left     = '';
       document.body.style.right    = '';
       document.body.style.overflow = '';
-      window.scrollTo(0, _bodyScrollY);
+      // Ripristina scroll in modo istantaneo: disabilita scroll-behavior smooth
+      // temporaneamente per evitare conflitti con "html { scroll-behavior: smooth }"
+      var htmlEl = document.documentElement;
+      htmlEl.style.scrollBehavior = 'auto';
+      window.scrollTo(0, y);
+      setTimeout(function() { htmlEl.style.scrollBehavior = ''; }, 50);
     }
 
     function showPopup() {
       lockBody();
+      overlay.style.display = ''; // ripristina display nel caso fosse stato nascosto
       // Reset all steps, show step 0
       steps.forEach(function(s) { s.style.cssText = HIDDEN; });
       var s0 = steps[0];
@@ -2030,16 +2039,22 @@ document.querySelectorAll('a[href^="#"]').forEach(a => {
     }
 
     function hidePopup() {
-      // Prima blur per chiudere tastiera, poi sblocca body
+      // 1. Blur immediato: chiude la tastiera e rilascia il focus
       if (document.activeElement && document.activeElement !== document.body) {
         document.activeElement.blur();
       }
+      // 2. Avvia animazione uscita overlay
       overlay.classList.remove('visible');
       sessionStorage.setItem('popupDismissed', '1');
-      // Sblocca body e ripristina scroll — eseguito con piccolo ritardo
-      // per dare tempo all'animazione di uscita di partire
-      setTimeout(unlockBody, 50);
-      // Reset form e messaggi di errore
+      // 3. Sblocca body solo DOPO che tastiera è chiusa (~300 ms su iOS)
+      //    e dopo la transizione CSS (~350 ms).
+      //    Poi imposta display:none per rimuovere l'overlay dal rendering tree:
+      //    elimina ogni possibile blocco touch sul form sottostante.
+      setTimeout(function() {
+        unlockBody();
+        overlay.style.display = 'none';
+      }, 400);
+      // 4. Reset form e messaggi di errore
       var form = document.getElementById('quizForm');
       if (form) {
         form.reset();

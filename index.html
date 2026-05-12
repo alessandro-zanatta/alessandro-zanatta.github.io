@@ -1004,6 +1004,12 @@
             .testimonial-slide { padding: 0 4px; box-sizing: border-box; }
             .testimonial-card { max-width: 100%; box-sizing: border-box; }
         }
+        /* Previene zoom automatico iOS su input con font < 16px */
+        @media (max-width: 768px) {
+            input, textarea, select, .input {
+                font-size: 16px !important;
+            }
+        }
     </style>
 </head>
 <body>
